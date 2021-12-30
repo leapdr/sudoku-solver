@@ -1,9 +1,26 @@
+package src;
+import javax.security.auth.x500.X500Principal;
+import samples.samples;
+
 // package com.asb.sudokusolver;
 
 // import android.util.Log;
 
 /**
  * Created by aron4_000 on 9/2/2016.
+ */
+
+/**
+ * Sample Easy
+        in[0] = new Integer[] {8, 0, 0, 0, 5, 2, 0, 0, 0};
+        in[1] = new Integer[] {0, 0, 3, 8, 4, 6, 0, 7, 5};
+        in[2] = new Integer[] {0, 7, 5, 9, 0, 1, 0, 0, 0};
+        in[3] = new Integer[] {0, 5, 1, 3, 0, 4, 6, 0, 0};
+        in[4] = new Integer[] {0, 8, 6, 5, 2, 0, 0, 1, 7};
+        in[5] = new Integer[] {2, 9, 4, 1, 0, 0, 0, 8, 3};
+        in[6] = new Integer[] {0, 1, 0, 4, 7, 0, 0, 0, 0};
+        in[7] = new Integer[] {4, 0, 7, 2, 9, 5, 0, 0, 8};
+        in[8] = new Integer[] {5, 0, 0, 6, 0, 8, 0, 4, 9};
  */
 
 public class Solver {
@@ -14,7 +31,7 @@ public class Solver {
     private boolean canRetry = false;
 
     public static void main(String[] args){
-        Integer[][] in = new Integer [9][9];
+        Integer[][] in = samples.Easy1;
         in[0] = new Integer[] {0, 0, 0, 0, 0, 0, 0, 0, 0};
         in[1] = new Integer[] {0, 0, 1, 0, 0, 9, 8, 0, 0};
         in[2] = new Integer[] {9, 2, 0, 7, 0, 0, 0, 0, 0};
@@ -24,8 +41,17 @@ public class Solver {
         in[6] = new Integer[] {7, 0, 0, 4, 0, 0, 0, 0, 0};
         in[7] = new Integer[] {0, 5, 0, 0, 0, 6, 0, 0, 0};
         in[8] = new Integer[] {4, 0, 9, 0, 5, 0, 0, 1, 0};
+
         Solver solver = new Solver(in);
-        // Integer[][] result = solver.getOuput();
+        Integer[][] result = solver.getOuput();
+
+        // display result
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                System.out.print(result[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 
     public Solver(Integer[][] in){
@@ -46,13 +72,17 @@ public class Solver {
         return grid;
     }
 
+    public int getBoxOrder(int row, int col){
+        return ((row/3)*3) + (col/3);
+    }
+
     public void pencilIn(){
         int box;
         int count = 0;
 
         for(int i=0; i<9; i++){
             for(int j=0; j<9; j++){
-                box = ((i/3)*3) + (j/3);
+                box = getBoxOrder(i, j);
                 if(grid[i][j]==0){ // check if the cell is not empty
                     for(int x=1; x<10; x++){
                         // check if the box, row or column already has the number
@@ -188,18 +218,19 @@ public class Solver {
     }
 
     public void cleanNote(){
+        System.out.println("Cleaning Note");
         int box;
 
         for(int i=0; i<9; i++){
             for(int j=0; j<9; j++){
-                box = ((i/3)*3) + (j/3);
+                box = getBoxOrder(i, j);
                 if(grid[i][j]==0){
                     for(int x=0; x<9; x++){
                         if(gridNote[i][j][x] != null){
                             if(gridNote[i][j][x] > 0 && gridNote[i][j][x] < 10){
                                 if(checkNote(gridNote[i][j][x], box, i, j)){
                                     removeNote(gridNote[i][j][x], i, j);
-                                    x=0;
+                                    // x=0;
                                 }
                             }
                         }
@@ -235,6 +266,7 @@ public class Solver {
 
 
     void removeNote(int n, int y, int x){
+        System.out.println("Removing Note");
         int step=0;
         for(int c=0; c<9; c++){
             if(gridNote[y][x][c] != null){
