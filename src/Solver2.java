@@ -10,17 +10,18 @@ import samples.samples;
  * Created by aron4_000 on 9/2/2016.
  */
 
-public class Solver {
-    private Integer[][] output;
+public class Solver2 {
+    // main grid
     private Integer[][] grid = new Integer[9][9];
+
+    // note grid
     private Integer[][][] gridNote = new Integer[9][9][9];
-    private boolean hasSolution = true;
     private boolean canRetry = false;
 
     public static void main(String[] args){
         Integer[][] in = samples.Easy1;
 
-        Solver solver = new Solver(in);
+        Solver2 solver = new Solver2(in);
         Integer[][] result = solver.getOuput();
 
         // display result
@@ -32,7 +33,7 @@ public class Solver {
         }
     }
 
-    public Solver(Integer[][] in){
+    public Solver2(Integer[][] in){
         grid = in;
         solve();
     }
@@ -65,7 +66,7 @@ public class Solver {
                     for(int x=1; x<10; x++){
                         // check if the box, row or column already has the number
                         // adds the number to notes if it has not
-                        if(checkXYB(x, box, i, j)){
+                        if(!isInXYB(x, box, i, j)){
                             gridNote[i][j][count] = x;
                             count++;
                         }
@@ -92,7 +93,7 @@ public class Solver {
                     y = ((box/3)*3)+i;
                     for(int j=0; j<3; j++){
                         x = ((box%3)*3)+j;
-                        if(checkXYB(num, box, y, x) && grid[y][x] == 0){
+                        if(!isInXYB(num, box, y, x) && grid[y][x] == 0){
                             if(!checkNote(num, box, y, x)){
                                 puty = y;
                                 putx = x;
@@ -268,17 +269,27 @@ public class Solver {
         }
     }
 
-    public boolean checkXYB(int x, int box, int i, int j){
+    /**
+     * Performs cross checking on row, column and box
+     * 
+     * @param x, Row on the grid, x-axis
+     * @param y, Column on the grid, y-axis
+     * @param b, Smaller box on the grid, 3x3
+     * @param n, Number to be searched
+     * @return True|False The number x was found
+     */
+    public boolean isInXYB(int n, int b, int x, int y){
         // check row (i), column(j) and box(box) if it already has the number(x)
 
         System.out.println("Penciling In");
         for(int count=0; count<9; count++){
-            if(grid[i][count] == x) return false; // x coordinates
-            if(grid[count][j] == x) return false; // y coordinates
-            if(grid[((box/3)*3)+(count/3)][((box%3)*3)+(count%3)] == x) return false; // box
+            if(grid[x][count] == n) return true; // found on row
+            if(grid[count][y] == n) return true; // found on column
+            if(grid[((b/3)*3)+(count/3)][((b%3)*3)+(count%3)] == n) return true; // found on box
         }
 
-        return true;
+        // n was not found
+        return false;
     }
 
     public boolean checkNote(int x, int box, int i, int j){
