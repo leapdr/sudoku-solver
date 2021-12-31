@@ -8,7 +8,7 @@ public class Cell {
     public int N;
 
     public boolean filled = false;
-    public Note note;
+    private Note note;
 
     /**
      * Create an empty cell
@@ -42,6 +42,22 @@ public class Cell {
      */
     public boolean isFilled(){
         return this.filled;
+    }
+
+    /**
+     * Get the Cell notes
+     * @return
+     */
+    public Note getNotes(){
+        return this.note;
+    }
+
+    /**
+     * Set the Cell notes
+     * @param notes
+     */
+    public void setNotes(Note notes){
+        this.note = notes;
     }
 
     /**
