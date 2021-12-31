@@ -28,6 +28,10 @@ public class Cell {
      * @param n Cell number to be put
      */
     public Cell(int x, int y, int b, int n){
+        this.x = x;
+        this.y = y;
+        this.b = b;
+
         filled = true;
         this.N = n;
     }
@@ -38,5 +42,29 @@ public class Cell {
      */
     public boolean isFilled(){
         return this.filled;
+    }
+
+    /**
+     * Get the cell's Row
+     * @return Row
+     */
+    public int getCellRow(){
+        return this.x;
+    }
+
+    /**
+     * Get the cell's Col
+     * @return Col
+     */
+    public int getCellCol(){
+        return this.y;
+    }
+
+    /** 
+     * Get the cell's Small Box
+     * @return Box
+     */
+    public int getCellBox(){
+        return this.b;
     }
 }
