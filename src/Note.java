@@ -1,22 +1,18 @@
 package src;
+import java.util.*;
 
 /**
- * Array[9] as the structure for Notes
+ * This
  */
-public class Note {
-
-    private static final int MAX_NOTE = 9;
-    private boolean[] notes = new boolean[MAX_NOTE];
-    private int noteCount = 0;
+public class Note{
+    private final int MAX_NOTE;
+    private List<Integer> notes = new ArrayList<Integer>();
 
     /**
      * Initialize Note object
      */
-    public Note(){
-        // set all numbers to false
-        for(int i = 0; i < MAX_NOTE; i++){
-            notes[i] = false;
-        }
+    public Note(int size){
+        this.MAX_NOTE = size;
     }
 
     /**
@@ -25,16 +21,16 @@ public class Note {
      * @return
      */
     public boolean hasN(int n){
-        return notes[n];
+        return notes.contains(Integer.valueOf(n));
     }
 
     /**
      * Remove n from the notes
      * @param n
+     * @return
      */
-    public void removeN(int n){
-        notes[n] = false;
-        noteCount--;
+    public boolean removeN(int n){
+        return notes.remove(Integer.valueOf(n));
     }
 
     /**
@@ -42,7 +38,27 @@ public class Note {
      * @param n
      */
     public void addN(int n){
-        notes[n] = true;
-        noteCount++;
+        notes.add(Integer.valueOf(n));
+
+        if(notes.size() > MAX_NOTE){
+            // @TODO throw an exception here
+        }
+    }
+
+    /**
+     * Get the note at specific index
+     * @param index
+     * @return
+     */
+    public int getN(int index){
+        return notes.get(index);
+    }
+
+    /**
+     * Get the current note count
+     * @return
+     */
+    public int getCount(){
+        return notes.size();
     }
 }

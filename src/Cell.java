@@ -7,7 +7,7 @@ public class Cell {
 
     public int N;
 
-    public boolean filled = false;
+    public boolean filled;
     private Note note;
 
     /**
@@ -32,8 +32,17 @@ public class Cell {
         this.y = y;
         this.b = b;
 
-        filled = true;
+        this.filled = n != 0;
         this.N = n;
+    }
+
+    /**
+     * Finally fill a cell (Caim)
+     * @param n
+     */
+    public void fill(int n){
+        this.N = n;
+        this.filled = true;
     }
 
     /**

@@ -27,7 +27,7 @@ public class Sudoku {
                 int n = puzzle[y][x] != 0 ? puzzle[y][x] : 0;
 
                 // get the box number of the Cell
-                int b = ((x/3)*3) + (y/3);
+                int b = getBoxOrder(x, y);
 
                 grid[y][x] = new Cell(x, y, b, n);
             }
@@ -49,7 +49,7 @@ public class Sudoku {
     public void showSolved(){
         for(int i = 0; i < 9; i++){
             for(int j = 0; j < 9; j++){
-                System.out.print(this.grid[i][j] + " ");
+                System.out.print(this.solution[i][j] + " ");
             }
             System.out.println();
         }
@@ -69,5 +69,17 @@ public class Sudoku {
      */
     public Cell[][] getGrid(){
         return this.grid;
+    }
+
+    /**
+     * Get the smaller box order within the grid
+     * @TODO implement on other sizes
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    public static int getBoxOrder(int x, int y){
+        return ((x/3)*3) + (y/3);
     }
 }
