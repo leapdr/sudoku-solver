@@ -83,4 +83,13 @@ public class Cell {
     public int getCellBox(){
         return this.b;
     }
+
+    /**
+     * Checks the value of the Cell
+     * @param n The number to be compared
+     * @return
+     */
+    public boolean is(int n){
+        return this.N == n;
+    }
 }
