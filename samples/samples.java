@@ -1,7 +1,7 @@
 package samples;
 
 public class samples {
-    public static Integer[][] Easy1 = new Integer [][]{
+    public static int[][] Easy1 = new int [][]{
         {8, 0, 0, 0, 5, 2, 0, 0, 0},
         {0, 0, 3, 8, 4, 6, 0, 7, 5},
         {0, 7, 5, 9, 0, 1, 0, 0, 0},
@@ -13,7 +13,7 @@ public class samples {
         {5, 0, 0, 6, 0, 8, 0, 4, 9}
     };
 
-    public static Integer[][] Hard1 = new Integer [][]{
+    public static int[][] Hard1 = new int [][]{
         {0, 0, 0, 0, 0, 0, 0, 0, 0},
         {0, 0, 1, 0, 0, 9, 8, 0, 0},
         {9, 2, 0, 7, 0, 0, 0, 0, 0},
