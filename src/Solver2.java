@@ -1,6 +1,7 @@
 package src;
 import javax.security.auth.x500.X500Principal;
 import samples.samples;
+import java.util.*;
 
 // package com.asb.sudokusolver;
 
@@ -12,9 +13,10 @@ import samples.samples;
 
 public class Solver2 {
     // main grid
+    private Cell[][] grid;
+
     private int size;
     private boolean isSolved = false;
-    private Cell[][] grid;
 
     public Solver2(Cell[][] in, int size){
         this.grid = in;
@@ -24,6 +26,14 @@ public class Solver2 {
     public void solve(){
         // initialize pencilling in (setting candidates)
         pencilIn();
+
+        // initial iteration
+        for(int y = 0; y < this.size; y++){
+            for(int x = 0; x < this.size; x++){
+                // cross hatching
+                crossHatch(x, y);
+            }
+        }
     }
 
     /**
@@ -48,7 +58,11 @@ public class Solver2 {
         }
     }
 
-    public void pencilIn(){
+    /**
+     * Set the whole puzzle with notes/candidates
+     * @TODO test notes per cell
+     */
+    private void pencilIn(){
         int b;
 
         for(int y=0; y<9; y++){
@@ -79,6 +93,52 @@ public class Solver2 {
 
         // log 
         System.out.println("Finished Penciling in");
+    }
+
+    private void crossHatch(int x, int y){
+        // determine the other two vertical and horizontal adjacent line
+        // @TODO implement with other sizes
+        int xDeterminant = x % 3;
+        int yDeterminant = y % 3;
+
+        // adjacents
+        int ax, bx, ay, by = 0;
+        switch(xDeterminant){
+            case 0:
+                ax = x+1;
+                bx = x+2;
+                break;
+            case 1:
+                ax = x-1;
+                bx = x+1;
+                break;
+            case 2:
+                ax = x-2;
+                bx = x-1;
+                break;
+            default:
+                // raise exception here
+                break;
+        }
+        switch(yDeterminant){
+            case 0:
+                ay = y+1;
+                by = y+2;
+                break;
+            case 1:
+                ay = y-1;
+                by = y+1;
+                break;
+            case 2:
+                ay = y-2;
+                by = y-1;
+                break;
+            default:
+                // raise exception here
+                break;
+        }
+
+        
     }
 
     public boolean isInXYB(int n, int x, int y, int b){
