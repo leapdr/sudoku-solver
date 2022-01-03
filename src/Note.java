@@ -61,4 +61,8 @@ public class Note{
     public int getCount(){
         return notes.size();
     }
+
+    public boolean isSingle(){
+        return notes.size() == 1;
+    }
 }

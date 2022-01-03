@@ -82,4 +82,24 @@ public class Sudoku {
     public static int getBoxOrder(int x, int y){
         return ((x/3)*3) + (y/3);
     }
+
+    /**
+     * Get the Y axis of Cell c in the box
+     * @param b
+     * @param c
+     * @return
+     */
+    public static int getYFromB(int b, int c){
+        return ((b/3)*3)+(c/3);
+    }
+
+    /**
+     * Get the X axis of Cell c in the box
+     * @param b
+     * @param c
+     * @return
+     */
+    public static int getXFromB(int b, int c){
+        return ((b%3)*3)+(c%3);
+    }
 }

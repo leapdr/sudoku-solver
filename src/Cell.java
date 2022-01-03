@@ -37,6 +37,24 @@ public class Cell {
     }
 
     /**
+     * Add N to notes
+     * @param n
+     */
+    public void addToNote(int n){
+        this.note.addN(n);
+    }
+
+    /**
+     * Remove N to notes if it's not yet filled
+     * @param n
+     */
+    public void removeToNote(int n){
+        if( !this.isFilled() ){
+            this.note.removeN(n);
+        }
+    }
+
+    /**
      * Finally fill a cell (Caim)
      * @param n
      */
