@@ -48,6 +48,9 @@ public class Solver2 {
                 // cross hatching
                 if(!grid[y][x].isFilled()){
                     for(int n = 1; n <= this.size; n++){
+                        if(isToBeSkipped(n, x, y, b)){
+                            continue;
+                        }
                         crossHatch(n, x, y, b);
                     }
                 }
@@ -172,8 +175,7 @@ public class Solver2 {
                 break;
         }
 
-        // counter
-        return true;
+        return false;
     }
 
     /**
@@ -207,6 +209,26 @@ public class Solver2 {
         }
 
         return false;
+    }
+
+    /**
+     * Checks if n is within the row x
+     * @param n
+     * @param x
+     * @return
+     */
+    private boolean isInX(int n, int x){
+        return this.skipX.get(x).contains(n);
+    }
+
+    /**
+     * Checks if n is within the column y
+     * @param n
+     * @param y
+     * @return
+     */
+    private boolean isInY(int n, int y){
+        return this.skipY.get(y).contains(n);
     }
 
     public Cell[][] getSolution(){
