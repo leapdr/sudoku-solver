@@ -18,9 +18,22 @@ public class Solver2 {
     private int size;
     private boolean isSolved = false;
 
+    // skip operation counter for row, col and b
+    private List<List<Integer>> skipX = new ArrayList<List<Integer>>();
+    private List<List<Integer>> skipY = new ArrayList<List<Integer>>();
+    private List<List<Integer>> skipB = new ArrayList<List<Integer>>();
+
     public Solver2(Cell[][] in, int size){
         this.grid = in;
         this.size = size;
+
+        // initialize skip counters
+        for(int c = 0; c < this.size; c++){
+            List<Integer> tmp = new ArrayList<Integer>();
+            skipX.add(tmp);
+            skipY.add(tmp);
+            skipB.add(tmp);
+        }
     }
 
     public void solve(){
@@ -30,8 +43,14 @@ public class Solver2 {
         // initial iteration
         for(int y = 0; y < this.size; y++){
             for(int x = 0; x < this.size; x++){
+                int b = Sudoku.getBoxOrder(x, y);
+
                 // cross hatching
-                crossHatch(x, y);
+                if(!grid[y][x].isFilled()){
+                    for(int n = 1; n <= this.size; n++){
+                        crossHatch(n, x, y, b);
+                    }
+                }
             }
         }
     }
@@ -63,11 +82,9 @@ public class Solver2 {
      * @TODO test notes per cell
      */
     private void pencilIn(){
-        int b;
-
         for(int y=0; y<9; y++){
             for(int x=0; x<9; x++){
-                b = Sudoku.getBoxOrder(x, y);
+                int b = Sudoku.getBoxOrder(x, y);
 
                 if( !grid[y][x].isFilled() ){ // check if the cell is not empty
                     Note note = new Note(this.size);
@@ -87,7 +104,20 @@ public class Solver2 {
 
                     // assign the notes to cell
                     grid[y][x].setNotes(note);
-                } 
+                } else {
+                    Integer n = grid[y][x].N;
+
+                    // add to skip counters if it's still not in it
+                    if( !skipX.get(x).contains(n) ){
+                        skipX.get(x).add(n);
+                    }
+                    if( !skipY.get(y).contains(n) ){
+                        skipY.get(y).add(n);
+                    }
+                    if( !skipB.get(b).contains(n) ){
+                        skipB.get(b).add(n);
+                    }
+                }
             }
         }
 
@@ -95,13 +125,17 @@ public class Solver2 {
         System.out.println("Finished Penciling in");
     }
 
-    private void crossHatch(int x, int y){
+    private boolean crossHatch(int n, int x, int y, int b){
+        if(isInXYB(n, x, y, b)){
+            return false;
+        }
+
         // determine the other two vertical and horizontal adjacent line
         // @TODO implement with other sizes
         int xDeterminant = x % 3;
         int yDeterminant = y % 3;
 
-        // adjacents
+        // adjacents within the box
         int ax, bx, ay, by = 0;
         switch(xDeterminant){
             case 0:
@@ -138,9 +172,18 @@ public class Solver2 {
                 break;
         }
 
-        
+        // counter
+        return true;
     }
 
+    /**
+     * Check if n is in row, col or box
+     * @param n
+     * @param x
+     * @param y
+     * @param b
+     * @return
+     */
     public boolean isInXYB(int n, int x, int y, int b){
         // check row (i), column(j) and box(box) if it already has the number(x)
         for(int c=0; c<9; c++){
