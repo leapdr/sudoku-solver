@@ -177,6 +177,20 @@ public class Solver2 {
     }
 
     /**
+     * Checks whether n is to be skipped for filling the current cell
+     * @param n
+     * @param x
+     * @param y
+     * @param b
+     * @return
+     */
+    private boolean isToBeSkipped(int n, int x, int y, int b){
+        return this.skipB.get(b).contains(n) 
+            || this.skipX.get(x).contains(n)
+            || this.skipY.get(y).contains(n);
+    }
+
+    /**
      * Check if n is in row, col or box
      * @param n
      * @param x
@@ -184,7 +198,7 @@ public class Solver2 {
      * @param b
      * @return
      */
-    public boolean isInXYB(int n, int x, int y, int b){
+    private boolean isInXYB(int n, int x, int y, int b){
         // check row (i), column(j) and box(box) if it already has the number(x)
         for(int c=0; c<9; c++){
             if( this.grid[y][c].is(n) ) return true; // x coordinates
