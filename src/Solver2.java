@@ -42,7 +42,17 @@ public class Solver2 {
 
         // initial iteration
         for(int y = 0; y < this.size; y++){
+            // skip whole col if all units were already filled
+            if(this.skipY.get(y).size() == this.size){
+                continue;
+            }
+
             for(int x = 0; x < this.size; x++){
+                // skip whole row if all units were already filled
+                if(this.skipX.get(x).size() == this.size){
+                    continue;
+                }
+
                 Cell unit = grid[y][x];
                 int b = Sudoku.getBoxOrder(x, y);
 
