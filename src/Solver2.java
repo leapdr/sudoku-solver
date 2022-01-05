@@ -43,10 +43,16 @@ public class Solver2 {
         // initial iteration
         for(int y = 0; y < this.size; y++){
             for(int x = 0; x < this.size; x++){
+                Cell unit = grid[y][x];
                 int b = Sudoku.getBoxOrder(x, y);
 
-                // cross hatching
-                if(!grid[y][x].isFilled()){
+                // naked single
+                if(unit.getNotes().isSingle()){
+                    fillCell(unit.getNotes().getN(0), x, y, b);
+                }
+
+                // cross hatching | hidden single
+                if(!unit.isFilled()){
                     for(int n = 1; n <= this.size; n++){
                         if(isToBeSkipped(n, x, y, b)){
                             continue;
@@ -59,8 +65,10 @@ public class Solver2 {
     }
 
     /**
-     * Fill in the grid with a specific num permanently
-     * Remove notes from unfilled aligned Cells
+     * <p>Fill in the grid with a specific num permanently.</p>
+     * <p>Remove notes from unfilled aligned Cells.</p>
+     * <p>Add n to skip counters.</p>
+     * <p>Perform claiming.</p>
      * @param n The number to be filled
      * @param x row
      * @param y column
@@ -78,6 +86,11 @@ public class Solver2 {
             // box
             this.grid[Sudoku.getYFromB(b, c)][Sudoku.getXFromB(b, c)].removeToNote(n);
         }
+
+        // add to skip counters
+        this.skipB.get(b).add(n);
+        this.skipX.get(x).add(n);
+        this.skipY.get(y).add(n);
     }
 
     /**
@@ -98,11 +111,6 @@ public class Solver2 {
                         if(!isInXYB(n, x, y, b)){
                             note.addN(n);
                         }
-                    }
-
-                    // check if note is claimable
-                    if(note.isSingle()){
-                        fillCell(note.getN(0), x, y, b);
                     }
 
                     // assign the notes to cell
@@ -193,7 +201,9 @@ public class Solver2 {
     }
 
     /**
-     * Check if n is in row, col or box
+     * Check if n is in row, col or box. This function is used
+     * in the initial pencillingIn and is different from 
+     * <code>isToBeSkipped</code>.
      * @param n
      * @param x
      * @param y
