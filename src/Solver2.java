@@ -1,6 +1,7 @@
 package src;
 import javax.security.auth.x500.X500Principal;
 import samples.samples;
+import java.lang.Math;
 import java.util.*;
 
 // package com.asb.sudokusolver;
@@ -98,9 +99,7 @@ public class Solver2 {
         }
 
         // add to skip counters
-        this.skipB.get(b).add(n);
-        this.skipX.get(x).add(n);
-        this.skipY.get(y).add(n);
+        this.addToBeSkipped(n, x, y, b, true);
     }
 
     /**
@@ -129,15 +128,7 @@ public class Solver2 {
                     Integer n = grid[y][x].N;
 
                     // add to skip counters if it's still not in it
-                    if( !skipX.get(x).contains(n) ){
-                        skipX.get(x).add(n);
-                    }
-                    if( !skipY.get(y).contains(n) ){
-                        skipY.get(y).add(n);
-                    }
-                    if( !skipB.get(b).contains(n) ){
-                        skipB.get(b).add(n);
-                    }
+                    this.addToBeSkipped(n, x, y, b, false);
                 }
             }
         }
@@ -194,6 +185,93 @@ public class Solver2 {
         }
 
         return false;
+    }
+
+    /**
+     * Add n to skip counters
+     * @param forceAdd No checking needed
+     */
+    private void addToBeSkipped(int n, int x, int y, int b, boolean forceAdd){
+        if( forceAdd || !skipX.get(x).contains(n) ){
+            this.skipX.get(x).add(n);
+            if(this.skipX.get(x).size() == this.size - 1){
+                nakedClaimX(x);
+            }
+        }
+        if( forceAdd || !skipY.get(y).contains(n) ){
+            this.skipY.get(y).add(n);
+            if(this.skipX.get(x).size() == this.size - 1){
+                nakedClaimY(y);
+            }
+        }
+        if( forceAdd || !skipB.get(b).contains(n) ){
+            this.skipB.get(b).add(n);
+            if(this.skipB.get(b).size() == this.size - 1){
+                nakedClaimB(b);
+            }
+        }
+    }
+
+    /**
+     * Find the missing number from the list
+     * @param list
+     * @return
+     */
+    private int getMissingNFromNaked(List<Integer> list){
+        
+        int collection = list.stream().reduce(Integer.valueOf(0), (Integer a, Integer b) -> {
+            return a + Integer.valueOf((int) Math.pow(2, (b-1)));
+        });
+        
+        for(int c=1; c <= this.size ; c++){
+            if( (collection & (int) Math.pow(2, c-1)) == 0){
+                return c;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Naked claiming operation for row
+     */
+    private void nakedClaimX(int x){
+        int missingN = this.getMissingNFromNaked(this.skipX.get(x));
+
+        // find the location of naked cell
+        for(int c = 0; c < this.size; c++){
+            if( !this.grid[c][x].isFilled() ){
+                this.fillCell(missingN, x, c, Sudoku.getBoxOrder(x, c));
+                break;
+            }
+        }
+    }
+
+    private void nakedClaimY(int y){
+        int missingN = this.getMissingNFromNaked(this.skipY.get(y));
+
+        // find the location of naked cell
+        for(int c = 0; c < this.size; c++){
+            if( !this.grid[y][c].isFilled() ){
+                this.fillCell(missingN, c, y, Sudoku.getBoxOrder(c, y));
+                break;
+            }
+        }
+    }
+
+    private void nakedClaimB(int b){
+        int missingN = this.getMissingNFromNaked(this.skipB.get(b));
+
+        // find the location of naked cell
+        for(int c = 0; c < this.size; c++){
+            int x = Sudoku.getXFromB(b, c);
+            int y = Sudoku.getYFromB(b, c);
+
+            if( !this.grid[y][x].isFilled() ){
+                this.fillCell(missingN, x, y, b);
+                break;
+            }
+        }
     }
 
     /**
