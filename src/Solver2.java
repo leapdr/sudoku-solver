@@ -9,7 +9,12 @@ import java.util.*;
 // import android.util.Log;
 
 /**
- * Created by aron4_000 on 9/2/2016.
+ * Second revision of the Sudoku Solver.
+ * In this entire class:
+ *  x: means the row on the grid
+ *  y: means the column on the grid
+ *  b: means the box on the grid
+ *  n: means a number, can be a candidate or final value of cell
  */
 
 public class Solver2 {
@@ -80,9 +85,6 @@ public class Solver2 {
      * <p>Remove notes from unfilled aligned Cells.</p>
      * <p>Add n to skip counters.</p>
      * <p>Perform claiming.</p>
-     * @param n The number to be filled
-     * @param x row
-     * @param y column
      */
     private void fillCell(int n, int x, int y, int b){
         grid[y][x].fill(n);
@@ -214,7 +216,7 @@ public class Solver2 {
 
     /**
      * Find the missing number from the list
-     * @param list
+     * @param list The skip counter, can be X, Y, or B
      * @return
      */
     private int getMissingNFromNaked(List<Integer> list){
@@ -276,10 +278,6 @@ public class Solver2 {
 
     /**
      * Checks whether n is to be skipped for filling the current cell
-     * @param n
-     * @param x
-     * @param y
-     * @param b
      * @return
      */
     private boolean isToBeSkipped(int n, int x, int y, int b){
@@ -292,10 +290,6 @@ public class Solver2 {
      * Check if n is in row, col or box. This function is used
      * in the initial pencillingIn and is different from 
      * <code>isToBeSkipped</code>.
-     * @param n
-     * @param x
-     * @param y
-     * @param b
      * @return
      */
     private boolean isInXYB(int n, int x, int y, int b){
