@@ -139,18 +139,22 @@ public class Solver2 {
         System.out.println("Finished Penciling in");
     }
 
+    /**
+     * Cross Hatching | Hidden Singles
+     * @return
+     */
     private boolean crossHatch(int n, int x, int y, int b){
         if(isInXYB(n, x, y, b)){
             return false;
         }
 
-        // determine the other two vertical and horizontal adjacent line
+        // determines the other two vertical and horizontal adjacent line
         // @TODO implement with other sizes
         int xDeterminant = x % 3;
         int yDeterminant = y % 3;
 
-        // adjacents within the box
-        int ax, bx, ay, by = 0;
+        // x adjacents within the box
+        int ax = 0, bx = 0, ay = 0, by = 0;
         switch(xDeterminant){
             case 0:
                 ax = x+1;
@@ -168,6 +172,7 @@ public class Solver2 {
                 // raise exception here
                 break;
         }
+        // y adjacents within the box
         switch(yDeterminant){
             case 0:
                 ay = y+1;
@@ -184,6 +189,26 @@ public class Solver2 {
             default:
                 // raise exception here
                 break;
+        }
+
+        // only fill when other 8 cells are already filled or in skipCounters
+        boolean inAX = this.isInX(n, ax);
+        boolean inBX = this.isInX(n, bx);
+        boolean inAY = this.isInY(n, ay);
+        boolean inBY = this.isInY(n, by);
+
+        if( (this.grid[y][ax].isFilled() || inAX )
+            && (this.grid[y][bx].isFilled() || inBX ) 
+            && (this.grid[ay][x].isFilled() || inAY ) 
+            && (this.grid[by][x].isFilled() || inBY ) 
+
+            && (this.grid[ay][ax].isFilled() || inAX || inAY ) 
+            && (this.grid[ay][bx].isFilled() || inBX || inAY )
+            && (this.grid[by][ax].isFilled() || inAX || inBY ) 
+            && (this.grid[by][bx].isFilled() || inBX || inBY ) 
+        ){
+            this.fillCell(n, x, y, b);
+            return true;
         }
 
         return false;
@@ -282,8 +307,8 @@ public class Solver2 {
      */
     private boolean isToBeSkipped(int n, int x, int y, int b){
         return this.skipB.get(b).contains(n) 
-            || this.skipX.get(x).contains(n)
-            || this.skipY.get(y).contains(n);
+            || this.isInX(n, x)
+            || this.isInY(n, y);
     }
 
     /**
