@@ -1,8 +1,11 @@
 package src;
+import javax.annotation.processing.FilerException;
 import javax.security.auth.x500.X500Principal;
 import samples.samples;
 import java.lang.Math;
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 // package com.asb.sudokusolver;
 
@@ -29,6 +32,8 @@ public class Solver2 {
     private List<List<Integer>> skipY = new ArrayList<List<Integer>>();
     private List<List<Integer>> skipB = new ArrayList<List<Integer>>();
 
+    private FileWriter solutionHistoryFile;
+
     public Solver2(Cell[][] in, int size){
         this.grid = in;
         this.size = size;
@@ -39,6 +44,13 @@ public class Solver2 {
             skipX.add(tmp);
             skipY.add(tmp);
             skipB.add(tmp);
+        }
+
+        // initialize solution history file
+        try{
+            solutionHistoryFile = new FileWriter("solution.txt", true);
+        } catch(Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -87,17 +99,27 @@ public class Solver2 {
      * <p>Perform claiming.</p>
      */
     private void fillCell(int n, int x, int y, int b){
+        addHistory("Filling to " + x + " " + y + " " + b + ": " + n);
         grid[y][x].fill(n);
 
         for(int c=0; c<9; c++){
+            int nb;
+
             // x, row
+            nb = Sudoku.getBoxOrder(c, y);
+            addHistory("Removing note to " + c + " " + y + " " + nb + ": " + n);
             this.grid[y][c].removeToNote(n);
 
             // y, col
+            nb = Sudoku.getBoxOrder(x, c);
+            addHistory("Removing note to " + x + " " + c + " " + nb + ": " + n);
             this.grid[c][x].removeToNote(n);
 
             // box
-            this.grid[Sudoku.getYFromB(b, c)][Sudoku.getXFromB(b, c)].removeToNote(n);
+            int ny = Sudoku.getYFromB(b, c);
+            int nx = Sudoku.getXFromB(b, c);
+            addHistory("Removing note to " + nx + " " + ny + " " + c + ": " + n);
+            this.grid[ny][nx].removeToNote(n);
         }
 
         // add to skip counters
@@ -109,6 +131,8 @@ public class Solver2 {
      * @TODO test notes per cell
      */
     private void pencilIn(){
+        addHistory("Pencelling In: Started");
+
         for(int y=0; y<9; y++){
             for(int x=0; x<9; x++){
                 int b = Sudoku.getBoxOrder(x, y);
@@ -120,6 +144,7 @@ public class Solver2 {
                         // check if the box, row or column already has the number
                         // adds the number to notes if it has not
                         if(!isInXYB(n, x, y, b)){
+                            addHistory("Adding note to " + x + " " + y + " " + b + ": " + n);
                             note.addN(n);
                         }
                     }
@@ -144,9 +169,7 @@ public class Solver2 {
      * @return
      */
     private boolean crossHatch(int n, int x, int y, int b){
-        if(isInXYB(n, x, y, b)){
-            return false;
-        }
+        addHistory("Crosshatching " + x + " " + y + " " + b + ": " + n);
 
         // determines the other two vertical and horizontal adjacent line
         // @TODO implement with other sizes
@@ -207,10 +230,12 @@ public class Solver2 {
             && (this.grid[by][ax].isFilled() || inAX || inBY ) 
             && (this.grid[by][bx].isFilled() || inBX || inBY ) 
         ){
+            addHistory("Crosshatching point found");
             this.fillCell(n, x, y, b);
             return true;
         }
 
+        addHistory("Crosshatching point not found");
         return false;
     }
 
@@ -219,19 +244,23 @@ public class Solver2 {
      * @param forceAdd No checking needed
      */
     private void addToBeSkipped(int n, int x, int y, int b, boolean forceAdd){
-        if( forceAdd || !skipX.get(x).contains(n) ){
+        if( forceAdd || !isInX(n, x) ){
+            addHistory("Adding to X skip counter " + x + ": " + n);
             this.skipX.get(x).add(n);
+
             if(this.skipX.get(x).size() == this.size - 1){
                 nakedClaimX(x);
             }
         }
-        if( forceAdd || !skipY.get(y).contains(n) ){
+        if( forceAdd || !isInY(n, y) ){
+            addHistory("Adding to Y skip counter " + y + ": " + n);
             this.skipY.get(y).add(n);
             if(this.skipX.get(x).size() == this.size - 1){
                 nakedClaimY(y);
             }
         }
         if( forceAdd || !skipB.get(b).contains(n) ){
+            addHistory("Adding to B skip counter " + b + ": " + n);
             this.skipB.get(b).add(n);
             if(this.skipB.get(b).size() == this.size - 1){
                 nakedClaimB(b);
@@ -268,6 +297,7 @@ public class Solver2 {
         // find the location of naked cell
         for(int c = 0; c < this.size; c++){
             if( !this.grid[c][x].isFilled() ){
+                addHistory("Naked claim X found.");
                 this.fillCell(missingN, x, c, Sudoku.getBoxOrder(x, c));
                 break;
             }
@@ -280,6 +310,7 @@ public class Solver2 {
         // find the location of naked cell
         for(int c = 0; c < this.size; c++){
             if( !this.grid[y][c].isFilled() ){
+                addHistory("Naked claim Y found.");
                 this.fillCell(missingN, c, y, Sudoku.getBoxOrder(c, y));
                 break;
             }
@@ -295,6 +326,7 @@ public class Solver2 {
             int y = Sudoku.getYFromB(b, c);
 
             if( !this.grid[y][x].isFilled() ){
+                addHistory("Naked claim B found.");
                 this.fillCell(missingN, x, y, b);
                 break;
             }
@@ -353,5 +385,13 @@ public class Solver2 {
             this.solve();
         }
         return this.grid;
+    }
+
+    private void addHistory(String message){
+        try{
+            solutionHistoryFile.append(message + "\n");
+        } catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }
