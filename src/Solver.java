@@ -1,6 +1,6 @@
 package src;
 import javax.security.auth.x500.X500Principal;
-import samples.samples;
+import samples.Samples;
 
 // package com.asb.sudokusolver;
 
@@ -18,7 +18,7 @@ public class Solver {
     private boolean canRetry = false;
 
     public static void main(String[] args){
-        Integer[][] in = samples.Easy1;
+        Integer[][] in; // = Samples.Easy1;
 
         Solver solver = new Solver(in);
         Integer[][] result = solver.getOuput();

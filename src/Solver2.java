@@ -1,7 +1,6 @@
 package src;
 import javax.annotation.processing.FilerException;
 import javax.security.auth.x500.X500Principal;
-import samples.samples;
 import java.lang.Math;
 import java.util.*;
 import java.io.FileWriter;
@@ -35,22 +34,23 @@ public class Solver2 {
     private FileWriter solutionHistoryFile;
 
     public Solver2(Cell[][] in, int size){
-        this.grid = in;
-        this.size = size;
-
-        // initialize skip counters
-        for(int c = 0; c < this.size; c++){
-            List<Integer> tmp = new ArrayList<Integer>();
-            skipX.add(tmp);
-            skipY.add(tmp);
-            skipB.add(tmp);
-        }
-
         // initialize solution history file
         try{
             solutionHistoryFile = new FileWriter("solution.txt", true);
         } catch(Exception e){
             e.printStackTrace();
+        }
+
+        this.grid = in;
+        this.size = size;
+
+        // initialize skip counters
+        addHistory("Initializing skip counters");
+        for(int c = 0; c < this.size; c++){
+            List<Integer> tmp = new ArrayList<Integer>();
+            skipX.add(tmp);
+            skipY.add(tmp);
+            skipB.add(tmp);
         }
     }
 

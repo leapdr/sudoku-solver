@@ -1,4 +1,5 @@
 package src;
+import samples.Samples;
 
 public class Sudoku {
     private int size;
