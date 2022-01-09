@@ -62,12 +62,19 @@ public class Solver2 {
         for(int y = 0; y < this.size; y++){
             // skip whole col if all units were already filled
             if(this.skipY.get(y).size() == this.size){
+                addHistory("Skip column " + y);
                 continue;
             }
 
             for(int x = 0; x < this.size; x++){
                 // skip whole row if all units were already filled
                 if(this.skipX.get(x).size() == this.size){
+                    addHistory("Skip row " + x);
+                    break;
+                }
+
+                // skip cell if filled
+                if(grid[y][x].isFilled()){
                     continue;
                 }
 
@@ -160,8 +167,7 @@ public class Solver2 {
             }
         }
 
-        // log 
-        System.out.println("Finished Penciling in");
+        addHistory("Finished Penciling in");
     }
 
     /**
@@ -394,14 +400,33 @@ public class Solver2 {
         return this.skipY.get(y).contains(n);
     }
 
-    public Cell[][] getSolution(){
+    public Cell[][] getSolution(boolean toPrint){
         if(!this.isSolved){
             this.solve();
+        }
+
+        if(toPrint){
+            String line = "";
+            for(int y = 0; y < this.size; y++){
+                for(int x = 0; x < this.size; x++){
+                    line = line + " " + grid[y][x].N;
+                }
+                addHistory(line);
+                line = "";
+            }
+        }
+
+        try{
+            this.solutionHistoryFile.close();
+        } catch(Exception e){
+            e.printStackTrace();
         }
         return this.grid;
     }
 
     private void addHistory(String message){
+        System.out.println(message);
+
         try{
             solutionHistoryFile.append(message + "\n");
         } catch(IOException e){

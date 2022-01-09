@@ -40,7 +40,7 @@ public class Sudoku {
     public void solvePuzzle(){
         this.solver = new Solver2(this.grid, this.size);
         this.solver.solve();
-        this.solution = solver.getSolution();
+        this.solution = solver.getSolution(true);
     }
 
     /**
@@ -80,7 +80,7 @@ public class Sudoku {
      * @return
      */
     public static int getBoxOrder(int x, int y){
-        return ((x/3)*3) + (y/3);
+        return (x/3) + ((y/3)*3);
     }
 
     /**
