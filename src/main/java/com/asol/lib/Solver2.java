@@ -83,6 +83,7 @@ public class Solver2 {
 
                 // naked single
                 if(unit.getNotes().isSingle()){
+                    addHistory("Naked single found at " + x + " " + y);
                     fillCell(unit.getNotes().getN(0), x, y, b);
                 }
 
@@ -107,30 +108,36 @@ public class Solver2 {
      */
     private void fillCell(int n, int x, int y, int b){
         addHistory("Filling to " + x + " " + y + " " + b + ": " + n);
-        grid[x][y].fill(n);
+        this.grid[x][y].fill(n);
 
         for(int c=0; c<9; c++){
             int nb;
 
             // x, row
-            nb = Sudoku.getBoxOrder(c, x);
-            addHistory("Removing note to " + x + " " + c + " " + nb + ": " + n);
-            this.grid[x][c].removeToNote(n);
+            if( !this.grid[x][c].isFilled() ){
+                nb = Sudoku.getBoxOrder(x, c);
+                addHistory("Removing note to " + x + " " + c + " " + nb + ": " + n);
+                this.grid[x][c].removeToNote(n);
+            }
 
             // y, col
-            nb = Sudoku.getBoxOrder(x, y);
-            addHistory("Removing note to " + c + " " + y + " " + nb + ": " + n);
-            this.grid[c][y].removeToNote(n);
+            if( !this.grid[c][y].isFilled() ){
+                nb = Sudoku.getBoxOrder(c, y);
+                addHistory("Removing note to " + c + " " + y + " " + nb + ": " + n);
+                this.grid[c][y].removeToNote(n);
+            }
 
             // box
             int ny = Sudoku.getYFromB(b, c);
             int nx = Sudoku.getXFromB(b, c);
-            addHistory("Removing note to " + nx + " " + ny + " " + c + ": " + n);
-            this.grid[ny][nx].removeToNote(n);
+            if( !this.grid[nx][ny].isFilled() ){
+                addHistory("Removing note to " + nx + " " + ny + " " + b + ": " + n);
+                this.grid[nx][ny].removeToNote(n);
+            }
         }
 
         // add to skip counters
-        this.addToBeSkipped(n, x, y, b, true);
+        this.addToBeSkipped(n, x, y, b, false);
     }
 
     /**
@@ -161,8 +168,8 @@ public class Solver2 {
                 } else {
                     Integer n = grid[x][y].N;
 
-                    // add to skip counters if it's still not in it
-                    this.addToBeSkipped(n, x, y, b, false);
+                    // initial, force add to skip counters
+                    this.addToBeSkipped(n, x, y, b, true);
                 }
             }
         }
@@ -255,35 +262,37 @@ public class Solver2 {
             addHistory("Adding to X skip counter " + x + ": " + n);
             this.skipX.get(x).add(n);
 
-            if(this.skipX.get(x).size() == this.size - 1){
-                nakedClaimX(x);
-            }
-
             // y skip counters
             addHistory("Adding to Y skip counter " + y + ": " + n);
             this.skipY.get(y).add(n);
-            if(this.skipX.get(x).size() == this.size - 1){
-                nakedClaimY(y);
-            }
 
             // b skip counters
             addHistory("Adding to B skip counter " + b + ": " + n);
             this.skipB.get(b).add(n);
-            if(this.skipB.get(b).size() == this.size - 1){
-                nakedClaimB(b);
-            }
         } else {
             if( !isInX(n, x) ){
                 addHistory("Adding to X skip counter " + x + ": " + n);
                 this.skipX.get(x).add(n);
+
+                if(this.skipX.get(x).size() == this.size - 1){
+                    nakedClaimX(x);
+                }
             }
             if( !isInY(n, y) ){
                 addHistory("Adding to Y skip counter " + y + ": " + n);
                 this.skipY.get(y).add(n);
+
+                if(this.skipX.get(x).size() == this.size - 1){
+                    nakedClaimY(y);
+                }
             }
             if( !skipB.get(b).contains(n) ){
                 addHistory("Adding to B skip counter " + b + ": " + n);
                 this.skipB.get(b).add(n);
+
+                if(this.skipB.get(b).size() == this.size - 1){
+                    nakedClaimB(b);
+                }
             }
         }
     }
@@ -371,10 +380,10 @@ public class Solver2 {
      */
     private boolean isInXYB(int n, int x, int y, int b){
         // check row (i), column(j) and box(box) if it already has the number(x)
-        for(int c=0; c<9; c++){
+        for(int c=0; c<this.size; c++){
             if( this.grid[x][c].is(n) ) return true; // x coordinates
             if( this.grid[c][y].is(n) ) return true; // y coordinates
-            if( this.grid[Sudoku.getYFromB(b, c)][Sudoku.getXFromB(b, c)].is(n) ) return true; // box
+            if( this.grid[Sudoku.getXFromB(b, c)][Sudoku.getYFromB(b, c)].is(n) ) return true; // box
         }
 
         return false;
