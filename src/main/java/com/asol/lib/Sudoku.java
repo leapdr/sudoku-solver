@@ -80,7 +80,7 @@ public class Sudoku {
      * @return
      */
     public static int getBoxOrder(int x, int y){
-        return (x/3) + ((y/3)*3);
+        return ((x/3)*3) + (y/3);
     }
 
     /**
@@ -90,7 +90,7 @@ public class Sudoku {
      * @return
      */
     public static int getYFromB(int b, int c){
-        return ((b/3)*3)+(c/3);
+        return ((b%3)*3)+(c%3);
     }
 
     /**
@@ -100,6 +100,6 @@ public class Sudoku {
      * @return
      */
     public static int getXFromB(int b, int c){
-        return ((b%3)*3)+(c%3);
+        return ((b/3)*3)+(c/3);
     }
 }

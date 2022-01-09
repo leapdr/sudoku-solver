@@ -59,26 +59,26 @@ public class Solver2 {
         pencilIn();
 
         // initial iteration
-        for(int y = 0; y < this.size; y++){
-            // skip whole col if all units were already filled
-            if(this.skipY.get(y).size() == this.size){
-                addHistory("Skip column " + y);
-                continue;
+        for(int x = 0; x < this.size; x++){
+            // skip whole row if all units were already filled
+            if(this.skipX.get(x).size() == this.size){
+                addHistory("Skip row " + x);
+                break;
             }
 
-            for(int x = 0; x < this.size; x++){
-                // skip whole row if all units were already filled
-                if(this.skipX.get(x).size() == this.size){
-                    addHistory("Skip row " + x);
-                    break;
-                }
-
-                // skip cell if filled
-                if(grid[y][x].isFilled()){
+            for(int y = 0; y < this.size; y++){
+                // skip whole col if all units were already filled
+                if(this.skipY.get(y).size() == this.size){
+                    addHistory("Skip column " + y);
                     continue;
                 }
 
-                Cell unit = grid[y][x];
+                // skip cell if filled
+                if(grid[x][y].isFilled()){
+                    continue;
+                }
+
+                Cell unit = grid[x][y];
                 int b = Sudoku.getBoxOrder(x, y);
 
                 // naked single
@@ -107,20 +107,20 @@ public class Solver2 {
      */
     private void fillCell(int n, int x, int y, int b){
         addHistory("Filling to " + x + " " + y + " " + b + ": " + n);
-        grid[y][x].fill(n);
+        grid[x][y].fill(n);
 
         for(int c=0; c<9; c++){
             int nb;
 
             // x, row
-            nb = Sudoku.getBoxOrder(c, y);
-            addHistory("Removing note to " + c + " " + y + " " + nb + ": " + n);
-            this.grid[y][c].removeToNote(n);
+            nb = Sudoku.getBoxOrder(c, x);
+            addHistory("Removing note to " + x + " " + c + " " + nb + ": " + n);
+            this.grid[x][c].removeToNote(n);
 
             // y, col
-            nb = Sudoku.getBoxOrder(x, c);
-            addHistory("Removing note to " + x + " " + c + " " + nb + ": " + n);
-            this.grid[c][x].removeToNote(n);
+            nb = Sudoku.getBoxOrder(x, y);
+            addHistory("Removing note to " + c + " " + y + " " + nb + ": " + n);
+            this.grid[c][y].removeToNote(n);
 
             // box
             int ny = Sudoku.getYFromB(b, c);
@@ -140,11 +140,11 @@ public class Solver2 {
     private void pencilIn(){
         addHistory("Pencelling In: Started");
 
-        for(int y=0; y<9; y++){
-            for(int x=0; x<9; x++){
+        for(int x=0; x<9; x++){
+            for(int y=0; y<9; y++){
                 int b = Sudoku.getBoxOrder(x, y);
 
-                if( !grid[y][x].isFilled() ){ // check if the cell is not empty
+                if( !grid[x][y].isFilled() ){ // check if the cell is not empty
                     Note note = new Note(this.size);
 
                     for(int n=1; n<=this.size; n++){
@@ -157,9 +157,9 @@ public class Solver2 {
                     }
 
                     // assign the notes to cell
-                    grid[y][x].setNotes(note);
+                    grid[x][y].setNotes(note);
                 } else {
-                    Integer n = grid[y][x].N;
+                    Integer n = grid[x][y].N;
 
                     // add to skip counters if it's still not in it
                     this.addToBeSkipped(n, x, y, b, false);
@@ -316,7 +316,7 @@ public class Solver2 {
 
         // find the location of naked cell
         for(int c = 0; c < this.size; c++){
-            if( !this.grid[c][x].isFilled() ){
+            if( !this.grid[x][c].isFilled() ){
                 addHistory("Naked claim X found.");
                 this.fillCell(missingN, x, c, Sudoku.getBoxOrder(x, c));
                 break;
@@ -329,7 +329,7 @@ public class Solver2 {
 
         // find the location of naked cell
         for(int c = 0; c < this.size; c++){
-            if( !this.grid[y][c].isFilled() ){
+            if( !this.grid[c][y].isFilled() ){
                 addHistory("Naked claim Y found.");
                 this.fillCell(missingN, c, y, Sudoku.getBoxOrder(c, y));
                 break;
@@ -345,7 +345,7 @@ public class Solver2 {
             int x = Sudoku.getXFromB(b, c);
             int y = Sudoku.getYFromB(b, c);
 
-            if( !this.grid[y][x].isFilled() ){
+            if( !this.grid[x][y].isFilled() ){
                 addHistory("Naked claim B found.");
                 this.fillCell(missingN, x, y, b);
                 break;
@@ -372,8 +372,8 @@ public class Solver2 {
     private boolean isInXYB(int n, int x, int y, int b){
         // check row (i), column(j) and box(box) if it already has the number(x)
         for(int c=0; c<9; c++){
-            if( this.grid[y][c].is(n) ) return true; // x coordinates
-            if( this.grid[c][x].is(n) ) return true; // y coordinates
+            if( this.grid[x][c].is(n) ) return true; // x coordinates
+            if( this.grid[c][y].is(n) ) return true; // y coordinates
             if( this.grid[Sudoku.getYFromB(b, c)][Sudoku.getXFromB(b, c)].is(n) ) return true; // box
         }
 
