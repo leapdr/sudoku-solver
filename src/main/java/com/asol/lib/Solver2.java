@@ -270,7 +270,7 @@ public class Solver2 {
             addHistory("Adding to B skip counter " + b + ": " + n);
             this.skipB.get(b).add(n);
         } else {
-            if( !isInX(n, x) ){
+            if( !isInX(n, x) && this.skipX.size() < this.size - 1 ){
                 addHistory("Adding to X skip counter " + x + ": " + n);
                 this.skipX.get(x).add(n);
 
@@ -278,7 +278,7 @@ public class Solver2 {
                     nakedClaimX(x);
                 }
             }
-            if( !isInY(n, y) ){
+            if( !isInY(n, y) && this.skipY.size() < this.size - 1){
                 addHistory("Adding to Y skip counter " + y + ": " + n);
                 this.skipY.get(y).add(n);
 
@@ -286,7 +286,7 @@ public class Solver2 {
                     nakedClaimY(y);
                 }
             }
-            if( !skipB.get(b).contains(n) ){
+            if( !skipB.get(b).contains(n) && this.skipB.size() < this.size - 1 ){
                 addHistory("Adding to B skip counter " + b + ": " + n);
                 this.skipB.get(b).add(n);
 
