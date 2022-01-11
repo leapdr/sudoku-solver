@@ -63,7 +63,7 @@ public class Solver2 {
             // skip whole row if all units were already filled
             if(this.skipX.get(x).size() == this.size){
                 addHistory("Skip row " + x);
-                break;
+                continue;
             }
 
             for(int y = 0; y < this.size; y++){
@@ -270,7 +270,7 @@ public class Solver2 {
             addHistory("Adding to B skip counter " + b + ": " + n);
             this.skipB.get(b).add(n);
         } else {
-            if( !isInX(n, x) && this.skipX.size() < this.size - 1 ){
+            if( !isInX(n, x) && this.skipX.get(x).size() < this.size - 1 ){
                 addHistory("Adding to X skip counter " + x + ": " + n);
                 this.skipX.get(x).add(n);
 
@@ -278,7 +278,7 @@ public class Solver2 {
                     nakedClaimX(x);
                 }
             }
-            if( !isInY(n, y) && this.skipY.size() < this.size - 1){
+            if( !isInY(n, y) && this.skipY.get(y).size() < this.size - 1){
                 addHistory("Adding to Y skip counter " + y + ": " + n);
                 this.skipY.get(y).add(n);
 
@@ -286,12 +286,23 @@ public class Solver2 {
                     nakedClaimY(y);
                 }
             }
-            if( !skipB.get(b).contains(n) && this.skipB.size() < this.size - 1 ){
+            if( !skipB.get(b).contains(n) && this.skipB.get(b).size() < this.size - 1 ){
                 addHistory("Adding to B skip counter " + b + ": " + n);
                 this.skipB.get(b).add(n);
 
                 if(this.skipB.get(b).size() == this.size - 1){
                     nakedClaimB(b);
+                }
+            }
+            else{
+                if(skipB.get(b).contains(n)){
+                    String msg = "";
+                    for(int i =0; i < skipB.get(b).size(); i++){
+                        msg += " " + skipB.get(b).get(i);
+                    }
+                    addHistory("B contains " + n + ". Skipping b counter " + b + " : " + msg);
+                } else {
+                    addHistory("Skipping b counter " + b + " with " + n);
                 }
             }
         }

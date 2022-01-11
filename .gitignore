@@ -1,5 +1,5 @@
 .vscode
 *.class
-target/
+target/*
 solution.txt
 
