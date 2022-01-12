@@ -259,15 +259,15 @@ public class Solver2 {
     private void addToBeSkipped(int n, int x, int y, int b, boolean forceAdd){
         if(forceAdd){
             // x skip counters
-            addHistory("Adding to X skip counter " + x + ": " + n);
+            addHistory("Force adding to X skip counter " + x + ": " + n);
             this.skipX.get(x).add(n);
 
             // y skip counters
-            addHistory("Adding to Y skip counter " + y + ": " + n);
+            addHistory("Force adding to Y skip counter " + y + ": " + n);
             this.skipY.get(y).add(n);
 
             // b skip counters
-            addHistory("Adding to B skip counter " + b + ": " + n);
+            addHistory("Force adding to B skip counter " + b + ": " + n);
             this.skipB.get(b).add(n);
         } else {
             if( !isInX(n, x) && this.skipX.get(x).size() < this.size - 1 ){
