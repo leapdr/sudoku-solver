@@ -98,6 +98,8 @@ public class Solver2 {
                 }
             }
         }
+
+        this.isSolved = true;
     }
 
     /**
