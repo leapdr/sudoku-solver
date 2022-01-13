@@ -49,7 +49,9 @@ public class Solver2 {
         for(int c = 0; c < this.size; c++){
             List<Integer> tmp = new ArrayList<Integer>();
             skipX.add(tmp);
+            tmp = new ArrayList<Integer>();
             skipY.add(tmp);
+            tmp = new ArrayList<Integer>();
             skipB.add(tmp);
         }
     }
