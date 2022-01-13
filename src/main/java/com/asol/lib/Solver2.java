@@ -95,7 +95,10 @@ public class Solver2 {
                         if(isToBeSkipped(n, x, y, b)){
                             continue;
                         }
-                        crossHatch(n, x, y, b);
+                        // terminate crosshatching if filled
+                        if( crossHatch(n, x, y, b) ){
+                            break;
+                        }
                     }
                 }
             }
