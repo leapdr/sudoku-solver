@@ -240,17 +240,17 @@ public class Solver2 {
         boolean inAY = this.isInY(n, ay);
         boolean inBY = this.isInY(n, by);
 
-        if( (this.grid[y][ax].isFilled() || inAX )
-            && (this.grid[y][bx].isFilled() || inBX ) 
-            && (this.grid[ay][x].isFilled() || inAY ) 
-            && (this.grid[by][x].isFilled() || inBY ) 
+        if( (this.grid[x][ay].isFilled() || inAY )
+            && (this.grid[x][by].isFilled() || inBY ) 
+            && (this.grid[ax][y].isFilled() || inAX ) 
+            && (this.grid[bx][y].isFilled() || inBX ) 
 
-            && (this.grid[ay][ax].isFilled() || inAX || inAY ) 
-            && (this.grid[ay][bx].isFilled() || inBX || inAY )
-            && (this.grid[by][ax].isFilled() || inAX || inBY ) 
-            && (this.grid[by][bx].isFilled() || inBX || inBY ) 
+            && (this.grid[ax][ay].isFilled() || inAX || inAY ) 
+            && (this.grid[ax][by].isFilled() || inAX || inBY )
+            && (this.grid[bx][ay].isFilled() || inBX || inAY ) 
+            && (this.grid[bx][by].isFilled() || inBX || inBY ) 
         ){
-            addHistory("Crosshatching point found");
+            addHistory("Crosshatching point found through: " + ax + " " + bx + " " + ay + " " + by);
             this.fillCell(n, x, y, b);
             return true;
         }
