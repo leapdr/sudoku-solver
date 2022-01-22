@@ -16,11 +16,11 @@ public class Solver {
     private boolean hasSolution = true;
     private boolean canRetry = false;
 
-    public static void main(String[] args){
-        Integer[][] in = new Integer[9][9]; // = Samples.Easy1;
 
-        Solver solver = new Solver(in);
-        Integer[][] result = solver.getOuput();
+    public Solver(Integer[][] in){
+        grid = in;
+        solve();
+        Integer[][] result = this.getOuput();
 
         // display result
         for(int i = 0; i < 9; i++){
@@ -29,11 +29,6 @@ public class Solver {
             }
             System.out.println();
         }
-    }
-
-    public Solver(Integer[][] in){
-        grid = in;
-        solve();
     }
 
     public void solve(){

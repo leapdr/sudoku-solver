@@ -12,7 +12,7 @@ public class App
     public static void main( String[] args )
     {
         Sudoku sudoku = new Sudoku();
-        sudoku.setPuzzle(Sample.Easy1);
+        sudoku.setPuzzle(Sample.Hard1);
         sudoku.solvePuzzle();
     }
 }
