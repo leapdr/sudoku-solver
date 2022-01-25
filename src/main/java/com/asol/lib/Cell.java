@@ -119,4 +119,13 @@ public class Cell {
     public boolean is(int n){
         return this.N == n;
     }
+
+    /**
+     * Checks whether this cell has a specifc note n
+     * @param n 
+     * @return
+     */
+    public boolean has(int n){
+        return this.note.hasN(n);
+    }
 }

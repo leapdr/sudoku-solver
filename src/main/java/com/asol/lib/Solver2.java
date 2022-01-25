@@ -62,6 +62,9 @@ public class Solver2 {
 
         // initial iteration
         for(int x = 0; x < this.size; x++){
+            // claiming
+            claim(x);
+
             // skip whole row if all units were already filled
             if(this.skipX.get(x).size() == this.size){
                 addHistory("Skip row " + x);
@@ -111,7 +114,7 @@ public class Solver2 {
      * <p>Fill in the grid with a specific num permanently.</p>
      * <p>Remove notes from unfilled aligned Cells.</p>
      * <p>Add n to skip counters.</p>
-     * <p>Perform claiming.</p>
+     * <p>Cleanup related notes.</p>
      */
     private void fillCell(int n, int x, int y, int b){
         addHistory("Filling to " + x + " " + y + " " + b + ": " + n);
@@ -182,6 +185,113 @@ public class Solver2 {
         }
 
         addHistory("Finished Penciling in");
+    }
+
+    /**
+     * Claiming
+     * @param xy The x and also the y for claiming
+     */
+    private void claim(int xy){
+        int x = xy;
+        int y = xy;
+
+        for(int n = 1; n <= this.size; n++){
+            // skip if already in row & column
+            boolean skipX = this.isInX(n, x);
+            boolean skipY = this.isInY(n, y);
+
+            if(skipX && skipY){
+                continue;
+            }
+
+            // for naked candidates
+            int countFoundX = 0;
+            int countFoundY = 0;
+
+            // these are not chromosomes!!
+            int lastXX = 0;
+            int lastXY = 0;
+            int lastYX = 0;
+            int lastYY = 0;
+
+            ArrayList<Integer> bx = new ArrayList<>();
+            ArrayList<Integer> by = new ArrayList<>();
+
+            for(int i = 0; i < this.size; i++){
+                // x claiming
+                if(!skipX){
+                    if( !grid[x][i].isFilled() && grid[x][i].has(n) ){
+                        countFoundX++;
+                        lastXX = x; lastXY = i;
+
+                        int tmpXBox = Sudoku.getBoxOrder(x, i);
+                        if( !bx.contains(tmpXBox) ){
+                            bx.add(tmpXBox);
+                        }
+                    }
+                }
+
+                // y claiming
+                if(!skipY){
+                    if( !grid[i][y].isFilled() && grid[i][y].has(n) ){
+                        countFoundY++;
+                        lastYX = i; lastYY = y;
+
+                        int tmpYBox = Sudoku.getBoxOrder(i, y);
+                        if( !by.contains(tmpYBox) ){
+                            by.add(tmpYBox);
+                        }
+                    }
+                }
+            }
+
+            // fill if hidden single is found
+            if(countFoundX == 1){
+                addHistory("Hidden Single found at: " + lastXX + " " + lastXY);
+                fillCell(n, lastXX, lastXY, Sudoku.getBoxOrder(lastXX, lastYY));
+            }
+
+            if(countFoundY == 1){
+                addHistory("Hidden Single found at: " + lastYX + " " + lastYY);
+                fillCell(n, lastYX, lastYY, Sudoku.getBoxOrder(lastYX, lastYY));
+            }
+
+            if( countFoundX == 1 || countFoundY == 1){
+                continue;
+            }
+
+            // remove notes if claiming is possible
+            // @TODO, skip if n is already on the other two boxes;
+            if( bx.size() == 1 ){
+                cleanBoxNote(bx.get(0), x, 'x', n);
+            }
+
+            if( by.size() == 1 ){
+                cleanBoxNote(by.get(0), y, 'y', n);
+            }
+        }
+    }
+
+    private void cleanBoxNote(int b, int xy, char d, int n) {
+        for(int i = 0; i < this.size; i++){
+            int bx = Sudoku.getXFromB(b, i);
+            int by = Sudoku.getYFromB(b, i);
+
+            switch(d){
+                case 'x':
+                    if(bx != xy){
+                        addHistory("Claiming: removing note to " + bx + " " + by + " " + b + ": " + n);
+                        grid[bx][by].removeToNote(n);
+                    }
+                    break;
+                case 'y':
+                    if(by != xy){
+                        addHistory("Claiming: removing note to " + bx + " " + by + " " + b + ": " + n);
+                        grid[bx][by].removeToNote(n);
+                    }
+                    break;
+            }
+        }
     }
 
     /**
@@ -425,6 +535,16 @@ public class Solver2 {
      */
     private boolean isInY(int n, int y){
         return this.skipY.get(y).contains(n);
+    }
+
+    /**
+     * Checks if n is within the column y
+     * @param n
+     * @param b
+     * @return
+     */
+    private boolean isInB(int n, int b){
+        return this.skipB.get(b).contains(n);
     }
 
     public Cell[][] getSolution(boolean toPrint){

@@ -1,5 +1,6 @@
 .vscode
 *.class
+*.jar
 target/*
 solution.txt
 
