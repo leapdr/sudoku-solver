@@ -277,6 +277,10 @@ public class Solver2 {
             int bx = Sudoku.getXFromB(b, i);
             int by = Sudoku.getYFromB(b, i);
 
+            if(grid[bx][by].isFilled() || !grid[bx][by].has(n)){
+                continue;
+            }
+
             switch(d){
                 case 'x':
                     if(bx != xy){
@@ -299,8 +303,6 @@ public class Solver2 {
      * @return
      */
     private boolean crossHatch(int n, int x, int y, int b){
-        addHistory("Crosshatching " + x + " " + y + " " + b + ": " + n);
-
         // determines the other two vertical and horizontal adjacent line
         // @TODO implement with other sizes
         int xDeterminant = x % 3;
@@ -365,7 +367,6 @@ public class Solver2 {
             return true;
         }
 
-        addHistory("Crosshatching point not found");
         return false;
     }
 
