@@ -39,8 +39,15 @@ public class Sudoku {
      */
     public void solvePuzzle(){
         this.solver = new Solver2(this.grid, this.size);
-        this.solver.solve();
-        this.solution = solver.getSolution(true);
+        // initialize pencilling in (setting candidates)
+        this.solver.pencilIn();
+        if( this.solver.solve() ){
+            this.solution = solver.getSolution(true);
+            System.out.println("Puzzle Solved!");
+        } else {
+            this.solution = solver.getSolution(true);
+            System.out.println("Puzzle not solved");
+        }
     }
 
     /**

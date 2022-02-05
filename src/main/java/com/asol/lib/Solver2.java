@@ -1,6 +1,8 @@
 package com.asol.lib;
 import javax.annotation.processing.FilerException;
 import javax.security.auth.x500.X500Principal;
+import javax.swing.text.DefaultEditorKit.InsertBreakAction;
+
 import java.lang.Math;
 import java.util.*;
 import java.io.FileWriter;
@@ -25,6 +27,10 @@ public class Solver2 {
 
     private int size;
     private boolean isSolved = false;
+
+    private int toFill = 0;
+    private int iterationChange = 0;
+    private int iteration = 0;
 
     // skip operation counter for row, col and b
     private List<List<Integer>> skipX = new ArrayList<List<Integer>>();
@@ -56,11 +62,10 @@ public class Solver2 {
         }
     }
 
-    public void solve(){
-        // initialize pencilling in (setting candidates)
-        pencilIn();
+    public boolean solve(){
+        // reset iteration changes count
+        iterationChange = 0;
 
-        // initial iteration
         for(int x = 0; x < this.size; x++){
             // claiming
             claim(x);
@@ -107,7 +112,19 @@ public class Solver2 {
             }
         }
 
-        this.isSolved = true;
+        iteration++;
+        addHistory("Iteration Done: " + iteration);
+
+        if(toFill == 0){
+            this.isSolved = true;
+            return true;
+        } else {
+            if(iterationChange > 0){
+                return solve();
+            } else {
+                return this.isSolved;
+            }
+        }
     }
 
     /**
@@ -119,6 +136,7 @@ public class Solver2 {
     private void fillCell(int n, int x, int y, int b){
         addHistory("Filling to " + x + " " + y + " " + b + ": " + n);
         this.grid[x][y].fill(n);
+        toFill--; iterationChange++;
 
         for(int c=0; c<9; c++){
             int nb;
@@ -154,7 +172,7 @@ public class Solver2 {
      * Set the whole puzzle with notes/candidates
      * @TODO test notes per cell
      */
-    private void pencilIn(){
+    public void pencilIn(){
         addHistory("Pencelling In: Started");
 
         for(int x=0; x<9; x++){
@@ -175,6 +193,8 @@ public class Solver2 {
 
                     // assign the notes to cell
                     grid[x][y].setNotes(note);
+
+                    toFill++;
                 } else {
                     Integer n = grid[x][y].N;
 
