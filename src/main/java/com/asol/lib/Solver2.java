@@ -68,7 +68,7 @@ public class Solver2 {
 
     public boolean solve(){
         // reset iteration changes count
-        iterationChange = 0;
+        this.iterationChange = 0;
 
         for(int x = 0; x < this.size; x++){
             // claiming
@@ -117,14 +117,14 @@ public class Solver2 {
         }
 
         iteration++;
-        addHistory("Iteration Done: " + iteration);
+        addHistory("Iteration ("+ iteration +") done with " + iterationChange + " changes.");
 
         if(toFill == 0){
             this.isSolved = true;
             return true;
         } else {
-            if(iterationChange > 0){
-                printGrid();
+            if(this.iterationChange > 0){
+                this.printGrid();
                 return solve();
             } else {
                 return this.isSolved;
@@ -141,30 +141,30 @@ public class Solver2 {
     private void fillCell(int n, int x, int y, int b){
         addHistory("Filling to " + x + " " + y + " " + b + ": " + n);
         this.grid[x][y].fill(n);
-        toFill--; iterationChange++;
+        this.toFill--; this.iterationChange++;
 
         for(int c=0; c<9; c++){
             int nb;
 
             // x, row
-            if( !this.grid[x][c].isFilled() ){
+            if( !this.grid[x][c].isFilled() && this.grid[x][c].has(n) ){
                 nb = Sudoku.getBoxOrder(x, c);
-                addHistory("Removing note to " + x + " " + c + " " + nb + ": " + n);
+                addHistory("(x) Removing note to " + x + " " + c + " " + nb + ": " + n);
                 this.grid[x][c].removeToNote(n);
             }
 
             // y, col
-            if( !this.grid[c][y].isFilled() ){
+            if( !this.grid[c][y].isFilled() && this.grid[c][y].has(n) ){
                 nb = Sudoku.getBoxOrder(c, y);
-                addHistory("Removing note to " + c + " " + y + " " + nb + ": " + n);
+                addHistory("(y) Removing note to " + c + " " + y + " " + nb + ": " + n);
                 this.grid[c][y].removeToNote(n);
             }
 
             // box
             int ny = Sudoku.getYFromB(b, c);
             int nx = Sudoku.getXFromB(b, c);
-            if( !this.grid[nx][ny].isFilled() ){
-                addHistory("Removing note to " + nx + " " + ny + " " + b + ": " + n);
+            if( !this.grid[nx][ny].isFilled() && this.grid[nx][ny].has(n) ){
+                addHistory("(b) Removing note to " + nx + " " + ny + " " + b + ": " + n);
                 this.grid[nx][ny].removeToNote(n);
             }
         }
@@ -272,13 +272,15 @@ public class Solver2 {
 
             // fill if hidden single is found
             if(countFoundX == 1){
-                addHistory("Hidden Single found at: " + lastXX + " " + lastXY);
-                fillCell(n, lastXX, lastXY, Sudoku.getBoxOrder(lastXX, lastYY));
+                int b = Sudoku.getBoxOrder(lastXX, lastXY);
+                addHistory("Hidden Single found at (x): " + lastXX + " " + lastXY + " " + b);
+                fillCell(n, lastXX, lastXY, b);
             }
 
             if(countFoundY == 1){
-                addHistory("Hidden Single found at: " + lastYX + " " + lastYY);
-                fillCell(n, lastYX, lastYY, Sudoku.getBoxOrder(lastYX, lastYY));
+                int b = Sudoku.getBoxOrder(lastYX, lastYY);
+                addHistory("Hidden Single found at (y): " + lastYX + " " + lastYY + " " + b);
+                fillCell(n, lastYX, lastYY, b);
             }
 
             if( countFoundX == 1 || countFoundY == 1){
@@ -309,13 +311,13 @@ public class Solver2 {
             switch(d){
                 case 'x':
                     if(bx != xy){
-                        addHistory("Claiming: removing note to " + bx + " " + by + " " + b + ": " + n);
+                        addHistory("(x) Claiming: removing note to " + bx + " " + by + " " + b + ": " + n);
                         grid[bx][by].removeToNote(n);
                     }
                     break;
                 case 'y':
                     if(by != xy){
-                        addHistory("Claiming: removing note to " + bx + " " + by + " " + b + ": " + n);
+                        addHistory("(y) Claiming: removing note to " + bx + " " + by + " " + b + ": " + n);
                         grid[bx][by].removeToNote(n);
                     }
                     break;
@@ -608,11 +610,13 @@ public class Solver2 {
     }
 
     private void printGrid(){
+        addHistory("Printing Grid.");
         for(int i = 0; i < 9; i++){
+            String line = "";
             for(int j = 0; j < 9; j++){
-                System.out.print(this.grid[i][j].N + " ");
+                line += this.grid[i][j].N + " ";
             }
-            System.out.println();
+            addHistory(line);
         }
     }
 }
