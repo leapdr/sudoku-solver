@@ -8,6 +8,10 @@ import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
 
+// @TODO
+// 1. Execute, the solution is incorrect
+// 2. Debug iterations
+
 // package com.asb.sudokusolver;
 
 // import android.util.Log;
@@ -120,6 +124,7 @@ public class Solver2 {
             return true;
         } else {
             if(iterationChange > 0){
+                printGrid();
                 return solve();
             } else {
                 return this.isSolved;
@@ -599,6 +604,15 @@ public class Solver2 {
             solutionHistoryFile.append(message + "\n");
         } catch(IOException e){
             e.printStackTrace();
+        }
+    }
+
+    private void printGrid(){
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                System.out.print(this.grid[i][j].N + " ");
+            }
+            System.out.println();
         }
     }
 }
