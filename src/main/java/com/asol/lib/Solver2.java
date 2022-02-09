@@ -8,12 +8,6 @@ import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
 
-// @TODO
-// 1. Execute, the solution is incorrect
-// 2. Debug iterations
-
-// package com.asb.sudokusolver;
-
 // import android.util.Log;
 
 /**
@@ -427,7 +421,7 @@ public class Solver2 {
                 addHistory("Adding to Y skip counter " + y + ": " + n);
                 this.skipY.get(y).add(n);
 
-                if(this.skipX.get(x).size() == this.size - 1){
+                if(this.skipY.get(y).size() == this.size - 1){
                     nakedClaimY(y);
                 }
             }
