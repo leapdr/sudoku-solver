@@ -8,6 +8,11 @@ import java.util.*;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * @TODO
+ * 1. Add naked subset and hidden subset
+ */
+
 // import android.util.Log;
 
 /**
@@ -67,6 +72,9 @@ public class Solver2 {
         for(int x = 0; x < this.size; x++){
             // claiming
             claim(x);
+
+            // subsets
+            subset(x);
 
             // skip whole row if all units were already filled
             if(this.skipX.get(x).size() == this.size){
@@ -290,6 +298,13 @@ public class Solver2 {
             if( by.size() == 1 ){
                 cleanBoxNote(by.get(0), y, 'y', n);
             }
+        }
+    }
+
+    private void subset(int xyb){
+        // naked
+        for(int i = 0; i < this.size; i++){
+            
         }
     }
 

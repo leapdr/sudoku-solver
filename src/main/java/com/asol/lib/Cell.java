@@ -79,6 +79,10 @@ public class Cell {
         return this.note;
     }
 
+    public int noteCount(){
+        return this.note.getCount();
+    }
+
     /**
      * Set the Cell notes
      * @param notes

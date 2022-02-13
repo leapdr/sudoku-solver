@@ -7,6 +7,7 @@ import java.util.*;
 public class Note{
     private final int MAX_NOTE;
     private List<Integer> notes = new ArrayList<Integer>();
+    private int binRep = 0;
 
     /**
      * Initialize Note object
@@ -30,6 +31,8 @@ public class Note{
      * @return
      */
     public boolean removeN(int n){
+        int intN = Integer.valueOf(n);
+        this.binRep ^= intN;
         return notes.remove(Integer.valueOf(n));
     }
 
@@ -38,7 +41,9 @@ public class Note{
      * @param n
      */
     public void addN(int n){
-        notes.add(Integer.valueOf(n));
+        int intN = Integer.valueOf(n);
+        this.binRep |= intN;
+        notes.add(intN);
 
         if(notes.size() > MAX_NOTE){
             // @TODO throw an exception here
