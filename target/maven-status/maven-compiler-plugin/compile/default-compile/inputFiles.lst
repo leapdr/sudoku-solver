@@ -1,7 +1,12 @@
+/home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Col.java
+/home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/interfaces/IArrangement.java
 /home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Cell.java
 /home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Note.java
 /home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/samples/Sample.java
 /home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Solver2.java
+/home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Box.java
 /home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Solver.java
 /home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/app/App.java
+/home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Group.java
 /home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Sudoku.java
+/home/aron/Projects/Java_Solutions/sudoku-solver/src/main/java/com/asol/lib/Row.java
